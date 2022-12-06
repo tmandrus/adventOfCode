@@ -48,3 +48,4 @@ done
 
 echo Position of stream for part ${part}: $(($i + $searchWidth))
 echo Unique letters: $currentFour
+ 
