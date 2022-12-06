@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-file=day3.dat
-part=2
+file=day3test.dat
+part=3
 str=$(echo {a..z} | tr -d ' ')
 sum=0
 
@@ -72,4 +72,62 @@ done
 echo Part A: $sum
 
 # /////////////////////////////////////////////////////////////////////////////
+fi
+
+if [[ ${part} -eq 3 ]]; then
+
+#this is not my solution - testing for speed. 
+#runs in about 0.06s
+while read -r line; do
+	a=${line::${#line}/2}
+	b=${line:${#line}/2}
+	# c=${a//["${a//["$b"]}"]}
+##   -- what's happening above? in c-?
+## ${string//substring/replacement}
+## Replace all matches of $substring with $replacement.
+    c=${a//[$b]/+} #no replacement, so we just delete. The bracket is a builtin to expand the variable
+#   -- ^^ if substring $b exists in $a, delete it/replace with +
+    d=${a//$b} #doesn't work
+    echo good substitution $c
+    echo failed substitution $d
+    c=${a//[$c]} #yields us only what's substituted
+    echo $c
+	c=${c::1} #down to 1 letter
+    echo $c 
+
+	[[ $a =~ [$b] ]] 
+	echo $BASH_REMATCH
+    e=${BASH_REMATCH[0]}
+    echo $e 
+    printf -v val %d "'$e"
+
+
+	# alternatively, use a [[ $c =~ [[:lower:]] ]] check
+	(( val -= (val >= 97 ? 96 : 38)))
+	(( sum += val ))
+done <"$file"
+
+printf '%s\n' "$sum"
+fi
+
+if [[ ${part} -eq 4 ]]; then
+#this is not my solution - testing for speed. 
+#runs in about 0.06s
+mapfile -t lines <"$file"
+
+for (( i = 0; i < ${#lines[@]}; i += 3 )); do
+	a=${lines[i]}
+	b=${lines[i+1]}
+	c=${lines[i+2]}
+	d=${a//["${a//["$b"]}"]}
+	d=${c//["${c//["$d"]}"]}
+	d=${d::1}
+
+	printf -v val %d "'$d"
+
+	(( val -= (val >= 97 ? 96 : 38)))
+	(( sum += val ))
+done
+
+printf '%s\n' "$sum"
 fi
